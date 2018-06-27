@@ -3,7 +3,7 @@
 from spark import GenericParser
 from spark import GenericASTBuilder
 from ast import AST
-
+#this is a comment
 class GrammaticalError(Exception):
     def __init__(self, string):
         self.string = string
