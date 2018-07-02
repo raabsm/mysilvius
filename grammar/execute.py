@@ -7,8 +7,17 @@ from time import time
 pin = 18
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(pin,GPIO.OUT)
-ifOn = False 
+GPIO.setup(pin,GPIO.OUT) 
+timeOn=0;
+ifOn = True
+if ifOn and time()-timeOn > 3:
+    ifOn = False
+    GPIO.output(pin,GPIO.LOW)
+    timeOn = time()
+    print "Ran if Statement"
+else:
+    pass
+
 class ExecuteCommands(GenericASTTraversal):
     def __init__(self, ast, real = True):
         GenericASTTraversal.__init__(self, ast)
@@ -44,12 +53,18 @@ class ExecuteCommands(GenericASTTraversal):
         self.automator.mod_plus_key(node.meta, node.children[0].meta[0])
     def n_movement(self, node):
         self.automator.key(node.meta[0].type)
+       # global ifOn
+       # ifOn = not ifOn
+       # if ifOn:
+        #    GPIO.output(pin,GPIO.HIGH)
+       # else:
+        #    GPIO.output(pin,GPIO.LOW)
         global ifOn
-        ifOn = not ifOn
-        if ifOn:
-            GPIO.output(pin,GPIO.HIGH)
-        else:
-            GPIO.output(pin,GPIO.LOW)
+        ifOn = True
+        GPIO.output(pin,GPIO.HIGH)
+        global timeOn
+        timeOn= time()
+        print timeOn 
     def n_sequence(self, node):
         for c in node.meta[0]:
             self.automator.raw_key(c)
