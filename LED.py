@@ -12,3 +12,4 @@ while(now - prev < 3):
 print "LED off"
 GPIO.output(18,GPIO.LOW)
 
+#this is a test comment
