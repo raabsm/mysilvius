@@ -12,7 +12,7 @@ timeOn=0;
 ifOn = True
 
 def checkTime(var,tim):
-    if var and time()-tim > 3:
+    if var and time()-tim > 10:
         global ifOn
         ifOn= False
         GPIO.output(pin,GPIO.LOW)
@@ -33,6 +33,9 @@ class ExecuteCommands(GenericASTTraversal):
         global ifOn
         global timeOn
         checkTime(ifOn,timeOn)
+        print "ran init"
+        #prints init when any command is successfully run...then the 10 seconds between light works well
+
     # a version of postorder which does not visit children recursively
     def postorder_flat(self, node=None):
         if node is None:
