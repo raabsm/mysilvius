@@ -10,14 +10,18 @@ GPIO.setwarnings(False)
 GPIO.setup(pin,GPIO.OUT) 
 timeOn=0;
 ifOn = True
-if ifOn and time()-timeOn > 3:
-    ifOn = False
-    GPIO.output(pin,GPIO.LOW)
-    timeOn = time()
-    print "Ran if Statement"
-else:
-    pass
 
+def checkTime(var,tim):
+    if var and time()-tim > 3:
+        global ifOn
+        ifOn= False
+        GPIO.output(pin,GPIO.LOW)
+        global timeOn
+        timeOn= time()
+        print "Ran if Statement"
+    else:
+        pass
+checkTime(ifOn, timeOn)
 class ExecuteCommands(GenericASTTraversal):
     def __init__(self, ast, real = True):
         GenericASTTraversal.__init__(self, ast)
@@ -26,7 +30,9 @@ class ExecuteCommands(GenericASTTraversal):
 
         self.postorder_flat()
         self.automator.flush()
-
+        global ifOn
+        global timeOn
+        checkTime(ifOn,timeOn)
     # a version of postorder which does not visit children recursively
     def postorder_flat(self, node=None):
         if node is None:
