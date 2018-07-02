@@ -38,6 +38,7 @@ class ExecuteCommands(GenericASTTraversal):
         self.automator.mod_plus_key(node.meta, node.children[0].meta[0])
     def n_movement(self, node):
         self.automator.key(node.meta[0].type)
+        print("you just made a movement!")
     def n_sequence(self, node):
         for c in node.meta[0]:
             self.automator.raw_key(c)
