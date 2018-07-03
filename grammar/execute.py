@@ -30,6 +30,10 @@ class ExecuteCommands(GenericASTTraversal):
     def n_chain(self, node):
         for n in node.children:
             self.postorder_flat(n)
+   
+    def n_elec(self, node):
+        print "test ", self, node, node.meta[0]
+        #node.meta[0] prints a 1 or 0 for true and false
     def n_char(self, node):
         self.automator.key(node.meta[0])
     def n_raw_char(self, node):
@@ -37,7 +41,7 @@ class ExecuteCommands(GenericASTTraversal):
     def n_mod_plus_key(self, node):
         self.automator.mod_plus_key(node.meta, node.children[0].meta[0])
     def n_movement(self, node):
-        self.automator.key(node.meta[0].type)
+       self.automator.key(node.meta[0].type)
     def n_sequence(self, node):
         for c in node.meta[0]:
             self.automator.raw_key(c)

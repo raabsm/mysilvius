@@ -44,6 +44,7 @@ class CoreParser(GenericParser):
             single_command ::= english
             single_command ::= word_sentence
             single_command ::= word_phrase
+            single_command ::= electricity
         '''
         return args[0]
 
@@ -70,6 +71,22 @@ class CoreParser(GenericParser):
             return args[0]
         else:
             return None
+    def p_electricity(self, args):
+        '''
+            electricity ::= light _state
+        ''' 
+        return AST('elec', [ chr(ord('0') + args[1]) ])
+    def p__state(self, args):
+        '''
+            _state ::= on
+            _state ::= off
+        '''
+        value = {
+            'on'   : True,
+            'off'  : False
+        }
+        return value[args[0].type]
+
 
     def p_number_rule(self, args):
         '''
