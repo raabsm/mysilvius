@@ -5,7 +5,8 @@ from spark import GenericASTTraversal
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(18,GPIO.OUT)
+pin = 18
+GPIO.setup(pin,GPIO.OUT)
 class ExecuteCommands(GenericASTTraversal):
     def __init__(self, ast, real = True):
         GenericASTTraversal.__init__(self, ast)
@@ -36,7 +37,7 @@ class ExecuteCommands(GenericASTTraversal):
     def n_elec(self, node):
        # print "test ", self, node, node.meta[0]
         #node.meta[0] prints a 1 or 0 for true and false
-        GPIO.output(18,int(node.meta[0]))
+        GPIO.output(pin,int(node.meta[0]))
     def n_char(self, node):
         self.automator.key(node.meta[0])
     def n_raw_char(self, node):
