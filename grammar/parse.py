@@ -73,17 +73,19 @@ class CoreParser(GenericParser):
             return None
     def p_electricity(self, args):
         '''
-            electricity ::= light _state
+            electricity ::= light _action
         ''' 
         return AST('elec', [ chr(ord('0') + args[1]) ])
-    def p__state(self, args):
+    def p__action(self, args):
         '''
-            _state ::= on
-            _state ::= off
+            _action ::= off
+            _action ::= on
+            _action ::= status
         '''
         value = {
-            'on'   : True,
-            'off'  : False
+            'off'    : 0,
+            'on'     : 1,
+            'status' : 2
         }
         return value[args[0].type]
 
