@@ -20,7 +20,6 @@ class CoreParser(GenericParser):
     def error(self, token):
         raise GrammaticalError(
             "Unexpected token `%s' (word number %d)" % (token, token.wordno))
-
     def p_chained_commands(self, args):
         '''
             chained_commands ::= single_command
@@ -45,6 +44,7 @@ class CoreParser(GenericParser):
             single_command ::= word_sentence
             single_command ::= word_phrase
             single_command ::= electricity
+            single_command ::= pinsetup
         '''
         return args[0]
 
@@ -71,11 +71,24 @@ class CoreParser(GenericParser):
             return args[0]
         else:
             return None
+  
+    def p_pinsetup(self,args):
+        '''
+            pinsetup ::= signal _number
+            pinsetup ::= signal _number _number
+        '''
+        #avoid index error
+        try:    
+            return AST('pinsetup', [ args[1]*10 + args[2] ]) 
+        except IndexError:
+            return AST('pinsetup', [ args[1] ])  
+
     def p_electricity(self, args):
         '''
             electricity ::= light _action
         ''' 
         return AST('elec', [ chr(ord('0') + args[1]) ])
+    #chr(ord is just a way of adding two ints and converting to str
     def p__action(self, args):
         '''
             _action ::= off

@@ -5,8 +5,8 @@ from spark import GenericASTTraversal
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-pin = 18
-GPIO.setup(pin,GPIO.OUT)
+pin = 0
+ifSetup = False
 class ExecuteCommands(GenericASTTraversal):
     def __init__(self, ast, real = True):
         GenericASTTraversal.__init__(self, ast)
@@ -37,20 +37,30 @@ class ExecuteCommands(GenericASTTraversal):
     def n_elec(self, node):
      #   print "test ", self, node, node.meta[0]
         #node.meta[0] prints a 1 or 0 for true and false
-       value = int(node.meta[0])
-       if value == 2:
-           if GPIO.input(pin) == 1:
-               print "LED is on"
-           else:
-               print "LED is off"
-       else:
-           GPIO.output(pin, value)
+        if ifSetup:
+            value = int(node.meta[0])
+            if value == 2:
+                if GPIO.input(pin) == 1:
+                    print "LED is on"
+                else:
+                    print "LED is off"
+            else:
+                GPIO.output(pin, value)
+        else:
+            print "Output pin not set up!!" 
+   
+    def n_pinsetup(self,node):
+        print self, node, node.meta[0], "---test"
+        global pin
+        pin = int(node.meta[0])
+        GPIO.setup(pin, GPIO.OUT)
+        global ifSetup
+        ifSetup = True
     def n_char(self, node):
         self.automator.key(node.meta[0])
     def n_raw_char(self, node):
         self.automator.raw_key(node.meta[0])
     def n_mod_plus_key(self, node):
-        print self, "---", node.meta, "---", node.children[0].meta[0]
         self.automator.mod_plus_key(node.meta, node.children[0].meta[0])
     def n_movement(self, node):
         self.automator.key(node.meta[0].type)
