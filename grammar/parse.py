@@ -64,7 +64,7 @@ class CoreParser(GenericParser):
     def p_repeat(self, args):
         '''
             repeat ::=
-            repeat ::= _number
+            repeat ::= _firstnumbers
         '''
         if len(args) > 0:
             return args[0]
@@ -73,40 +73,108 @@ class CoreParser(GenericParser):
 
     def p_number_rule(self, args):
         '''
-            number_rule ::= number _number
+            number_rule ::= number _firstnumbers
+            number_rule ::= number _tens 
+            number_rule ::= number _tens _ones
         '''
         return AST('char', [ chr(ord('0') + args[1]) ])
 
-    def p__number(self, args):
+    def p__firstnumbers(self, args):
         '''
-            _number ::= zero
-            _number ::= one
-            _number ::= two
-            _number ::= three
-            _number ::= four
-            _number ::= five
-            _number ::= six
-            _number ::= seven
-            _number ::= eight
-            _number ::= nine
+            _firstnumbers ::= zero
+            _firstnumbers ::= one
+            _firstnumbers ::= two
+            _firstnumbers ::= three
+            _firstnumbers ::= four
+            _firstnumbers ::= five
+            _firstnumbers ::= six
+            _firstnumbers ::= seven
+            _firstnumbers ::= eight
+            _firstnumbers ::= nine
+            _firstnumbers ::= ten
+            _firstnumbers ::= eleven
+            _firstnumbers ::= twelve
+            _firstnumbers ::= thirteen
+            _firstnumbers ::= fourteen
+            _firstnumbers ::= fifteen
+            _firstnumbers ::= sixteen
+            _firstnumbers ::= seventeen
+            _firstnumbers ::= eighteen
+            _firstnumbers ::= nineteen
         '''
         # doesn't work right now
         #for v in value:
         #    self.__doc__ += "number ::= " + v
         value = {
-            'zero'  : 0,
-            'one'   : 1,
-            'two'   : 2,
-            'three' : 3,
-            'four'  : 4,
-            'five'  : 5,
-            'six'   : 6,
-            'seven' : 7,
-            'eight' : 8,
-            'nine'  : 9
+            'zero'      : 0,
+            'one'       : 1,
+            'two'       : 2,
+            'three'     : 3,
+            'four'      : 4,
+            'five'      : 5,
+            'six'       : 6,
+            'seven'     : 7,
+            'eight'     : 8,
+            'nine'      : 9,
+            'ten'       : 10,
+            'eleven'    : 11,
+            'twelve'    : 12,
+            'thirteen'  : 13,
+            'fourteen'  : 14,
+            'fifteen'   : 15,
+            'sixteen'   : 16,
+            'seventeen' : 17,
+            'eighteen'  : 18,
+            'nineteen'  : 19,
         }
         return value[args[0].type]
+    def p__tens(self, args):
+        '''
+            _tens ::= twenty
+            _tens ::= thirty
+            _tens ::= forty
+            _tens ::= fifty
+            _tens ::= sixty
+            _tens ::= seventy
+            _tens ::= eighty
+            _tens ::= ninety 
+        '''
+       value = {
+            'twenty'   : 20,
+            'thirty'   : 30,
+            'forty'    : 40,
+            'fifty'    : 50,
+            'sixty'    : 60,
+            'seventy'  : 70,
+            'eighty'   : 80,
+            'ninety'   : 90
+       }
+       return value[args[0].type]
+    def p__ones(self, args):
+        '''
+            _ones ::= one
+            _ones ::= two
+            _ones ::= three
+            _ones ::= four
+            _ones ::= five
+            _ones ::= six
+            _ones ::= seven
+            _ones ::= eight
+            _ones ::= nine
+        '''
 
+        value = {
+            'one'       : 1,
+            'two'       : 2,
+            'three'     : 3,
+            'four'      : 4,
+            'five'      : 5,
+            'six'       : 6,
+            'seven'     : 7,
+            'eight'     : 8,
+            'nine'      : 9
+        }
+        return value[args[0].type]
     def p_sky_letter(self, args):
         '''
             sky_letter ::= sky letter
