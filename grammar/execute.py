@@ -1,5 +1,5 @@
 # Low-level execution of AST commands using xdotool.
-
+# this is a comment made from mac
 import os
 from spark import GenericASTTraversal
 import RPi.GPIO as GPIO
@@ -109,7 +109,6 @@ class Automator:
         print "`%s`" % command
         if self.real:
             os.system(command)
-
     def raw_key(self, k):
         if(k == "'"): k = 'apostrophe'
         elif(k == '.'): k = 'period'
