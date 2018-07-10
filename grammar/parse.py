@@ -139,7 +139,7 @@ class CoreParser(GenericParser):
             _tens ::= eighty
             _tens ::= ninety 
         '''
-       value = {
+        value = {
             'twenty'   : 20,
             'thirty'   : 30,
             'forty'    : 40,
@@ -148,8 +148,8 @@ class CoreParser(GenericParser):
             'seventy'  : 70,
             'eighty'   : 80,
             'ninety'   : 90
-       }
-       return value[args[0].type]
+        }
+        return value[args[0].type]
     def p__ones(self, args):
         '''
             _ones ::= one
