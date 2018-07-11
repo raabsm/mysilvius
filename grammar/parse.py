@@ -77,6 +77,16 @@ class CoreParser(GenericParser):
             number_rule ::= number _tens 
             number_rule ::= number _tens _ones
         '''
+        if args[1] >= 10 and len(args)<3:
+            tochar = [chr(ord('0') + (args[1]/10)), chr(ord('0') + (args[1]%10))]
+            for i in tochar:
+                print i
+            return AST('char', [tochar])
+        elif len(args) > 2:
+            tochar = [chr(ord('0') + (args[1]/10)), chr(ord('0') + args[2])]
+            for i in tochar:
+                print i
+            return AST('char', [tochar])
         return AST('char', [ chr(ord('0') + args[1]) ])
 
     def p__firstnumbers(self, args):
