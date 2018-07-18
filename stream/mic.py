@@ -173,7 +173,12 @@ class MyClient(WebSocketClient):
                     if self.show_hypotheses:
                         print >> sys.stderr, '\r%s' % trans.replace("\n", "\\n")
                     draw.rectangle((0,0,width,height), outline=0, fill=0)
-                    draw.text((x, top),       trans,  font=font, fill=255)
+                    if len(trans) > 20:
+                        cut = trans[0:21]
+                        draw.text((x, top),       cut,  font=font, fill=255)
+                        draw.text((x, top+8),       trans[21:],  font=font, fill=255)
+                    else:
+                        draw.text((x, top),       trans,  font=font, fill=255)
                     disp.image(image)
                     disp.display()
                     print '%s' % trans.replace("\n", "\\n")  # final result!
