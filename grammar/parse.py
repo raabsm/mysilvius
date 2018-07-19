@@ -70,16 +70,22 @@ class CoreParser(GenericParser):
             return args[0]
         else:
             return None
-
+    
     def p_number_rule(self, args):
         '''
-            number_rule ::= number _firstnumbers
-            number_rule ::= number _tens 
-            number_rule ::= number _tens _ones
-            number_rule ::= number _hundreds
-            number_rule ::= number _hundreds _firstnumbers
-            number_rule ::= number _hundreds _tens
-            number_rule ::= number _hundreds _tens _ones
+            number_rule ::= number number_set
+        '''
+        return AST('char', [ str(args[1]) ])
+
+    def p_number_set(self, args):
+        '''
+            number_set ::= _firstnumbers
+            number_set ::= _tens 
+            number_set ::= _tens _ones
+            number_set ::= _hundreds
+            number_set ::= _hundreds _firstnumbers
+            number_set ::= _hundreds _tens
+            number_set ::= _hundreds _tens _ones
         '''
 #        if args[1] >= 10 and len(args)<3:
 #            tochar = [chr(ord('0') + (args[1]/10)), chr(ord('0') + (args[1]%10))]
@@ -90,9 +96,9 @@ class CoreParser(GenericParser):
 #        else:
 #            return AST('char', [ chr(ord('0') + args[1]) ])
         total = 0
-        for x in range(1, len(args)):
+        for x in range(0, len(args)):
             total += args[x]
-        return AST('char', [str(total) ])
+        return total 
 
     def p__firstnumbers(self, args):
         '''
