@@ -76,6 +76,10 @@ class CoreParser(GenericParser):
             number_rule ::= number _firstnumbers
             number_rule ::= number _tens 
             number_rule ::= number _tens _ones
+            number_rule ::= number _hundreds
+            number_rule ::= number _hundreds _firstnumbers
+            number_rule ::= number _hundreds _tens
+            number_rule ::= number _hundreds _tens _ones
         '''
 #        if args[1] >= 10 and len(args)<3:
 #            tochar = [chr(ord('0') + (args[1]/10)), chr(ord('0') + (args[1]%10))]
@@ -85,7 +89,6 @@ class CoreParser(GenericParser):
 #            return AST('char', [tochar] )
 #        else:
 #            return AST('char', [ chr(ord('0') + args[1]) ])
-        
         total = 0
         for x in range(1, len(args)):
             total += args[x]
@@ -160,6 +163,54 @@ class CoreParser(GenericParser):
             'seventy'  : 70,
             'eighty'   : 80,
             'ninety'   : 90
+        }
+        return value[args[0].type]
+    def p__hundreds(self, args):
+        '''
+            _hundreds ::= one hundred
+            _hundreds ::= two hundred
+            _hundreds ::= three hundred
+            _hundreds ::= four hundred
+            _hundreds ::= five hundred
+            _hundreds ::= six hundred
+            _hundreds ::= seven hundred
+            _hundreds ::= eight hundred
+            _hundreds ::= nine hundred
+        '''
+        value = {
+            'one'   : 100,
+            'two'   : 200,
+            'three' : 300,
+            'four'  : 400,
+            'five'  : 500,
+            'six'   : 600,
+            'seven' : 700,
+            'eight' : 800,
+            'nine'  : 900
+        }
+        return value[args[0].type]
+    def p__thousands(self, args):
+        '''
+            _thousands ::= one thousand
+            _thousands ::= two thousand
+            _thousands ::= three thousand
+            _thousands ::= four thousand
+            _thousands ::= five thousand
+            _thousands ::= six thousand
+            _thousands ::= seven thousand
+            _thousands ::= eight thousand
+            _thousands ::= nine thousand
+        '''
+        value = {
+            'one thousand'   : 1000,
+            'two thousand'   : 2000,
+            'three thousand' : 3000,
+            'four thousand'  : 4000,
+            'five thousand'  : 5000,
+            'six thousand'   : 6000,
+            'seven thousand' : 7000,
+            'eight thousand' : 8000,
+            'nine thousand'  : 9000
         }
         return value[args[0].type]
     def p__ones(self, args):
