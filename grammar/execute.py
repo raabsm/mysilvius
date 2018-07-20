@@ -39,7 +39,9 @@ class ExecuteCommands(GenericASTTraversal):
         #node.meta[0] prints a 1 or 0 for true and false
         GPIO.output(pin,int(node.meta[0]))
     def n_char(self, node):
-        self.automator.key(node.meta[0])
+        char_list = list(node.meta[0])
+        for i in char_list:
+            self.automator.key(i)
     def n_raw_char(self, node):
         self.automator.raw_key(node.meta[0])
     def n_mod_plus_key(self, node):
