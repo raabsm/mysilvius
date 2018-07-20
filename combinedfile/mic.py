@@ -10,7 +10,7 @@ import json
 from parse import parse
 from parse import SingleInputParser
 from parse import GrammaticalError
-from execute import execute
+import execute
 from ast import printAST 
 from scan import find_keywords
 from scan import scan
@@ -183,17 +183,17 @@ class MyClient(WebSocketClient):
                         draw.text((x, top),       cut,  font=font, fill=255)
                         draw.text((x, top+8),       trans[21:],  font=font, fill=255)
                     else:
-                        draw.text((x, top),       trans,  font=font, fill=255)
-                    disp.image(image)
-                    disp.display()
-                    
+                        draw.text((x, top),       trans,  font=font, fill=255) 
                     try:
                         ast = parse(parser, scan(trans))
                         printAST(ast)
-                        execute(ast, True)
+                        execute.execute(ast, True)
                     except GrammaticalError as e:
                         print "Error:", e
-
+                    print execute.outputstring, "---from the mic file"
+                    draw.text((x, top+20),     execute.outputstring, font=font, fill=255)
+                    disp.image(image)
+                    disp.display()
                   #  print '%s' % trans.replace("\n", "\\n")  # final result!
                     sys.stdout.flush()
                 elif self.show_hypotheses:
