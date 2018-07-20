@@ -74,6 +74,7 @@ class CoreParser(GenericParser):
     def p_number_rule(self, args):
         '''
             number_rule ::= number number_set
+            number_rule ::= number second_number_set
         '''
         return AST('char', [ str(args[1]) ])
 
@@ -100,6 +101,18 @@ class CoreParser(GenericParser):
             total += args[x]
         return total 
 
+    def p_second_number_set(self, args):
+        '''
+            second_number_set ::= number_set _thousands
+            second_number_set ::= number_set _thousands number_set
+        '''
+        total = 0
+        for x in args:
+            if x == 1000:
+                total*= x
+            else:
+                total+=x
+        return total
     def p__firstnumbers(self, args):
         '''
             _firstnumbers ::= zero
@@ -197,26 +210,10 @@ class CoreParser(GenericParser):
         return value[args[0].type]
     def p__thousands(self, args):
         '''
-            _thousands ::= one thousand
-            _thousands ::= two thousand
-            _thousands ::= three thousand
-            _thousands ::= four thousand
-            _thousands ::= five thousand
-            _thousands ::= six thousand
-            _thousands ::= seven thousand
-            _thousands ::= eight thousand
-            _thousands ::= nine thousand
+            _thousands ::= thousand
         '''
         value = {
-            'one thousand'   : 1000,
-            'two thousand'   : 2000,
-            'three thousand' : 3000,
-            'four thousand'  : 4000,
-            'five thousand'  : 5000,
-            'six thousand'   : 6000,
-            'seven thousand' : 7000,
-            'eight thousand' : 8000,
-            'nine thousand'  : 9000
+            'thousand'   : 1000
         }
         return value[args[0].type]
     def p__ones(self, args):
