@@ -7,10 +7,14 @@ import threading
 import sys
 import urllib
 import json
-
-
+from parse import parse
+from parse import SingleInputParser
+from parse import GrammaticalError
+from execute import execute
+from ast import printAST 
+from scan import find_keywords
+from scan import scan
 import time
-
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_SSD1306
 
@@ -68,7 +72,8 @@ x = 0
 # Load default font.
 font = ImageFont.load_default()
 
-
+parser = SingleInputParser()
+find_keywords(parser)
 
 
 reconnect_mode = False
@@ -181,7 +186,15 @@ class MyClient(WebSocketClient):
                         draw.text((x, top),       trans,  font=font, fill=255)
                     disp.image(image)
                     disp.display()
-                    print '%s' % trans.replace("\n", "\\n")  # final result!
+                    
+                    try:
+                        ast = parse(parser, scan(trans))
+                        printAST(ast)
+                        execute(ast, True)
+                    except GrammaticalError as e:
+                        print "Error:", e
+
+                  #  print '%s' % trans.replace("\n", "\\n")  # final result!
                     sys.stdout.flush()
                 elif self.show_hypotheses:
                     print_trans = trans.replace("\n", "\\n")
