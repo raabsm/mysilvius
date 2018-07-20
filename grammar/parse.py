@@ -74,7 +74,9 @@ class CoreParser(GenericParser):
     def p_number_rule(self, args):
         '''
             number_rule ::= number number_set
-            number_rule ::= number second_number_set
+            number_rule ::= number thousand_number_set
+            number_rule ::= number million_number_set
+            number_rule ::= number billion_number_set
         '''
         return AST('char', [ str(args[1]) ])
 
@@ -88,23 +90,15 @@ class CoreParser(GenericParser):
             number_set ::= _hundreds _tens
             number_set ::= _hundreds _tens _ones
         '''
-#        if args[1] >= 10 and len(args)<3:
-#            tochar = [chr(ord('0') + (args[1]/10)), chr(ord('0') + (args[1]%10))]
-#            return AST('char', [tochar] )
-#        elif len(args) > 2:
-#            tochar = [chr(ord('0') + (args[1]/10)), chr(ord('0') + args[2])]          
-#            return AST('char', [tochar] )
-#        else:
-#            return AST('char', [ chr(ord('0') + args[1]) ])
         total = 0
         for x in range(0, len(args)):
             total += args[x]
         return total 
 
-    def p_second_number_set(self, args):
+    def p_thousand_number_set(self, args):
         '''
-            second_number_set ::= number_set _thousands
-            second_number_set ::= number_set _thousands number_set
+            thousand_number_set ::= number_set _thousands
+            thousand_number_set ::= number_set _thousands number_set
         '''
         total = 0
         for x in args:
@@ -112,7 +106,34 @@ class CoreParser(GenericParser):
                 total*= x
             else:
                 total+=x
-        return total
+        return total 
+    def p_million_number_set(self, args):
+        '''
+            million_number_set ::= number_set _millions 
+            million_number_set ::= number_set _millions number_set
+            million_number_set ::= number_set _millions thousand_number_set
+        '''
+        total = 0
+        for x in args:
+            if x == 1000000:
+                total*= x
+            else:
+                total+=x
+        return total 
+    def p_billion_number_set(self, args):
+        '''
+            billion_number_set ::= number_set _billions 
+            billion_number_set ::= number_set _billions number_set
+            billion_number_set ::= number_set _billions thousand_number_set
+            billion_number_set ::= number_set _billions million_number_set
+        '''
+        total = 0
+        for x in args:
+            if x == 1000000000:
+                total*= x
+            else:
+                total+=x
+        return total 
     def p__firstnumbers(self, args):
         '''
             _firstnumbers ::= zero
@@ -214,6 +235,22 @@ class CoreParser(GenericParser):
         '''
         value = {
             'thousand'   : 1000
+        }
+        return value[args[0].type]
+    def p__millions(self, args):
+        '''
+            _millions ::= million
+        '''
+        value = {
+            'million'   : 1000000
+        }
+        return value[args[0].type]
+    def p__billions(self, args):
+        '''
+            _billions ::= billion
+        '''
+        value = {
+            'billion'   : 1000000000
         }
         return value[args[0].type]
     def p__ones(self, args):
