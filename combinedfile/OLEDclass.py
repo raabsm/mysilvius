@@ -45,3 +45,7 @@ class OLEDclass():
         #draw.text((x, top+20), status, font=font, fill=255)
         disp.image(image)
         disp.display()
+    def printStatus(self, status):
+        draw.text((x, top+18), status, font=font, fill=255)
+        disp.image(image)
+        disp.display()

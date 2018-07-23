@@ -18,6 +18,7 @@ import subprocess
 import OLEDclass
 parser = SingleInputParser()
 find_keywords(parser)
+global OLED
 OLED = OLEDclass.OLEDclass()
 
 reconnect_mode = False

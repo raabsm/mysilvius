@@ -4,6 +4,7 @@ import os
 from spark import GenericASTTraversal
 import RPi.GPIO as GPIO
 import time
+import mic 
 outputstring = "testing"
 
 GPIO.setmode(GPIO.BCM)
@@ -47,14 +48,17 @@ class ExecuteCommands(GenericASTTraversal):
                 if GPIO.input(pin) == 1:
                     print "LED is on"
                     outputstring = "LED is on"
+                    mic.OLED.printStatus(outputstring)
                 else:
                     print "LED is off"
                     outputstring = "LED is off"
+                    mic.OLED.printStatus(outputstring)
             else:
                 GPIO.output(pin, value)
         else:
             print "Output pin not set up!!"
-            outputstring = "output pin isn't set up"    
+            outputstring = "output pin isn't set up"
+            mic.OLED.printStatus(outputstring)
     def n_pinsetup(self,node):
         print self, node, node.meta[0], "---test"
         global pin
