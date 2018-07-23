@@ -46,10 +46,10 @@ class ExecuteCommands(GenericASTTraversal):
             if value == 2:
                 if GPIO.input(pin) == 1:
                     print "LED is on"
-                    outputstring = "on"
+                    outputstring = "LED is on"
                 else:
                     print "LED is off"
-                    outputstring = "off"
+                    outputstring = "LED is off"
             else:
                 GPIO.output(pin, value)
         else:
