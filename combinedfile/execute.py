@@ -4,8 +4,7 @@ import os
 from spark import GenericASTTraversal
 import RPi.GPIO as GPIO
 import time
-import mic 
-outputstring = "testing"
+outputstring = "pin not set up"
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -16,10 +15,9 @@ class ExecuteCommands(GenericASTTraversal):
         GenericASTTraversal.__init__(self, ast)
         self.output = []
         self.automator = Automator(real)
-
         self.postorder_flat()
         self.automator.flush()
-
+        
     # a version of postorder which does not visit children recursively
     def postorder_flat(self, node=None):
         if node is None:
@@ -48,24 +46,31 @@ class ExecuteCommands(GenericASTTraversal):
                 if GPIO.input(pin) == 1:
                     print "LED is on"
                     outputstring = "LED is on"
-                    mic.OLED.printStatus(outputstring)
                 else:
                     print "LED is off"
                     outputstring = "LED is off"
-                    mic.OLED.printStatus(outputstring)
             else:
                 GPIO.output(pin, value)
         else:
             print "Output pin not set up!!"
-            outputstring = "output pin isn't set up"
-            mic.OLED.printStatus(outputstring)
+    def changeoutputstring(self):
+        global outputstring
+        if ifSetup:
+            if GPIO.input(pin) == 1:
+                outputstring = "LED is on"
+            else:
+                outputstring = "LED is off"
+        else:
+            outputstring = "pin isn't setup"
+        print outputstring
     def n_pinsetup(self,node):
-        print self, node, node.meta[0], "---test"
         global pin
+        global outputstring
         pin = int(node.meta[0])
         GPIO.setup(pin, GPIO.OUT)
         global ifSetup
         ifSetup = True
+        outputstring = "LED is off"
     def n_char(self, node):
         char_list = list(node.meta[0])
         for i in char_list:

@@ -37,7 +37,7 @@ class MyClient(WebSocketClient):
         self.send_adaptation_state_filename = send_adaptation_state_filename
         self.chunk = 0
         self.audio_gate = audio_gate
-
+        OLED.printStatus(execute.outputstring)
     def send_data(self, data):
         self.send(data, binary=True)
 
@@ -122,15 +122,10 @@ class MyClient(WebSocketClient):
                 if response['result']['final']:
                     if self.show_hypotheses:
                         print >> sys.stderr, '\r%s' % trans.replace("\n", "\\n")
-                    try:
-                        ast = parse(parser, scan(trans))
-                        printAST(ast)
-                        execute.execute(ast, True)
-                    except GrammaticalError as e:
-                        print "Error:", e
-                    print execute.outputstring, "---from the mic file"     
+                    
+                    self.runGrammar(trans)
+                    OLED.printStatus(execute.outputstring)
                     print "final result", '%s' % trans.replace("\n", "\\n")  # final result!
-                    #OLED.printToOLED(trans)
                     sys.stdout.flush()
                 elif self.show_hypotheses:
                     print_trans = trans.replace("\n", "\\n")
@@ -155,6 +150,13 @@ class MyClient(WebSocketClient):
                 print >> sys.stderr, "Sleeping for five seconds before reconnecting"
                 time.sleep(5)
 
+    def runGrammar(self, message):
+        try:
+            ast = parse(parser, scan(message))
+            printAST(ast)
+            execute.execute(ast, True)
+        except GrammaticalError as e:
+            print "Error:", e     
 
     def closed(self, code, reason=None):
         #print "Websocket closed() called"
