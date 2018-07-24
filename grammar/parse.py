@@ -91,8 +91,8 @@ class CoreParser(GenericParser):
             number_set ::= _hundreds _tens _ones
         '''
         total = 0
-        for x in range(0, len(args)):
-            total += args[x]
+        for x in args:
+            total += x
         return total 
 
     def p_thousand_number_set(self, args):
@@ -100,12 +100,8 @@ class CoreParser(GenericParser):
             thousand_number_set ::= number_set _thousands
             thousand_number_set ::= number_set _thousands number_set
         '''
-        total = 0
-        for x in args:
-            if x == 1000:
-                total*= x
-            else:
-                total+=x
+        total = args[0] * args[1]
+        if len(args)>2: total+=args[2]
         return total 
     def p_million_number_set(self, args):
         '''
@@ -113,12 +109,8 @@ class CoreParser(GenericParser):
             million_number_set ::= number_set _millions number_set
             million_number_set ::= number_set _millions thousand_number_set
         '''
-        total = 0
-        for x in args:
-            if x == 1000000:
-                total*= x
-            else:
-                total+=x
+        total = args[0] * args[1]
+        if len(args)>2: total+=args[2]
         return total 
     def p_billion_number_set(self, args):
         '''
@@ -126,13 +118,9 @@ class CoreParser(GenericParser):
             billion_number_set ::= number_set _billions number_set
             billion_number_set ::= number_set _billions thousand_number_set
             billion_number_set ::= number_set _billions million_number_set
-        '''
-        total = 0
-        for x in args:
-            if x == 1000000000:
-                total*= x
-            else:
-                total+=x
+        ''' 
+        total = args[0] * args[1]
+        if len(args)>2: total+=args[2]
         return total 
     def p__firstnumbers(self, args):
         '''
@@ -233,26 +221,17 @@ class CoreParser(GenericParser):
         '''
             _thousands ::= thousand
         '''
-        value = {
-            'thousand'   : 1000
-        }
-        return value[args[0].type]
+        return 1000
     def p__millions(self, args):
         '''
             _millions ::= million
         '''
-        value = {
-            'million'   : 1000000
-        }
-        return value[args[0].type]
+        return 1000000
     def p__billions(self, args):
         '''
             _billions ::= billion
         '''
-        value = {
-            'billion'   : 1000000000
-        }
-        return value[args[0].type]
+        return 1000000000
     def p__ones(self, args):
         '''
             _ones ::= one
