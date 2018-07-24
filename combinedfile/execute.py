@@ -2,14 +2,9 @@
 
 import os
 from spark import GenericASTTraversal
-import RPi.GPIO as GPIO
-import time
-outputstring = "pin not set up"
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-pin = 0
-ifSetup = False
+import GPIOclass
+GPIO = GPIOclass.GPIOclass()
+outputstring = GPIO.returnOutputString()
 class ExecuteCommands(GenericASTTraversal):
     def __init__(self, ast, real = True):
         GenericASTTraversal.__init__(self, ast)
@@ -39,38 +34,13 @@ class ExecuteCommands(GenericASTTraversal):
     def n_elec(self, node):
      #   print "test ", self, node, node.meta[0]
         #node.meta[0] prints a 1 or 0 for true and false
+        action = str(node.meta[0])
         global outputstring
-        if ifSetup:
-            value = int(node.meta[0])          
-            if value == 2:
-                if GPIO.input(pin) == 1:
-                    print "LED is on"
-                    outputstring = "LED is on"
-                else:
-                    print "LED is off"
-                    outputstring = "LED is off"
-            else:
-                GPIO.output(pin, value)
-        else:
-            print "Output pin not set up!!"
-    def changeoutputstring(self):
-        global outputstring
-        if ifSetup:
-            if GPIO.input(pin) == 1:
-                outputstring = "LED is on"
-            else:
-                outputstring = "LED is off"
-        else:
-            outputstring = "pin isn't setup"
-        print outputstring
+        outputstring = GPIO.perform(action)
     def n_pinsetup(self,node):
-        global pin
+        action = int(node.meta[0])
         global outputstring
-        pin = int(node.meta[0])
-        GPIO.setup(pin, GPIO.OUT)
-        global ifSetup
-        ifSetup = True
-        outputstring = "LED is off"
+        outputstring = GPIO.perform(action)
     def n_char(self, node):
         char_list = list(node.meta[0])
         for i in char_list:

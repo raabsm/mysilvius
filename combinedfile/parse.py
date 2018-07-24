@@ -81,7 +81,7 @@ class CoreParser(GenericParser):
         '''
             electricity ::= light _action
         ''' 
-        return AST('elec', [ chr(ord('0') + args[1]) ])
+        return AST('elec', [  args[1] ])
     #chr(ord is just a way of adding two ints and converting to str
     def p__action(self, args):
         '''
@@ -89,12 +89,12 @@ class CoreParser(GenericParser):
             _action ::= on
             _action ::= status
         '''
-        value = {
-            'off'    : 0,
-            'on'     : 1,
-            'status' : 2
-        }
-        return value[args[0].type]
+      #  value = {
+       #     'off'    : 0,
+      #      'on'     : 1,
+     #       'status' : 2
+     #   }
+        return str(args[0])
     def p_number_rule(self, args):
         '''
             number_rule ::= number number_set
