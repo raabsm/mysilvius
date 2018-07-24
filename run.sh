@@ -40,6 +40,10 @@ case "$action" in
         check_microphone
         run_recognition 0
         ;;
+    -s|--sam)
+	check_microphone
+	python combinedfile/mic.py -s silvius-server.voxhub.io 
+	;;
     -e|--execute)
         check_microphone
         run_recognition 1

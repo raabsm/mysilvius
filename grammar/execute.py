@@ -5,38 +5,6 @@ from spark import GenericASTTraversal
 import RPi.GPIO as GPIO
 import time
 
-import Adafruit_GPIO.SPI as SPI
-import Adafruit_SSD1306
-
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
-
-import subprocess
-
-RST = None 
-DC = 23
-SPI_PORT = 0
-SPI_DEVICE = 0
-
-
-# 128x32 display with hardware I2C:
-disp = Adafruit_SSD1306.SSD1306_128_32(rst=RST)
-
-# Clear display.
-disp.clear()
-disp.display()
-
-# Create blank image for drawing.
-# Make sure to create image with mode '1' for 1-bit color.
-width = disp.width
-height = disp.height
-image = Image.new('1', (width, height))
-draw = ImageDraw.Draw(image)
-
-font = ImageFont.load_default()
-
-
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 pin = 0
@@ -82,10 +50,6 @@ class ExecuteCommands(GenericASTTraversal):
                 GPIO.output(pin, value)
         else:
             print "Output pin not set up!!"
-            draw.text((0, -2+24),    "pin isn'y set up",  font=font, fill=255)
-            disp.image(image)
-            disp.display()
-   
     def n_pinsetup(self,node):
         print self, node, node.meta[0], "---test"
         global pin
@@ -94,7 +58,9 @@ class ExecuteCommands(GenericASTTraversal):
         global ifSetup
         ifSetup = True
     def n_char(self, node):
-        self.automator.key(node.meta[0])
+        char_list = list(node.meta[0])
+        for i in char_list:
+            self.automator.key(i)
     def n_raw_char(self, node):
         self.automator.raw_key(node.meta[0])
     def n_mod_plus_key(self, node):
