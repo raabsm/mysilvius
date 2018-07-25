@@ -29,11 +29,11 @@ if __name__ == '__main__':
 
         print ">", line,
         try:
-            #OLED.printToOLED(line)  #for when I don't want to speak
+            OLED.printToOLED(line)  #for when I don't want to speak
             ast = parse(parser, scan(line))
             printAST(ast)
             execute.execute(ast, f == sys.stdin)
-            #OLED.printStatus(execute.outputstring)
+            OLED.printStatus(execute.outputstring)
         except GrammaticalError as e:
             print "Error:", e
 

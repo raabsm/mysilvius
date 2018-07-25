@@ -52,6 +52,20 @@ class OLEDclass():
         disp.image(image)
         disp.display()
     def printStatus(self, status):
-        draw.text((x, top+18), status, font=font, fill=255)
-        disp.image(image)
-        disp.display()
+        if len(status) < 21:
+            draw.text((x, top+18), status, font=font, fill=255)
+            disp.image(image)
+            disp.display()
+        else:
+            pos= 0
+            while True:
+                draw.rectangle((x, top+18, width, height), outline = 0, fill =0)
+                draw.text((x, top+18), status[pos:], font = font, fill=255)
+                disp.image(image)
+                disp.display()
+                if pos == 0:
+                    time.sleep(1)
+                pos+=2
+                #time.sleep(.0001)
+                if len(status) - pos < 20:
+                    break
