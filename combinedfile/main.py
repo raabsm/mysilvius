@@ -7,6 +7,9 @@ from parse import GrammaticalError
 from parse import SingleInputParser
 from execute import execute
 from ast import printAST
+import OLEDclass
+
+OLED = OLEDclass.OLEDclass()
 
 if __name__ == '__main__':
     import sys
@@ -26,6 +29,7 @@ if __name__ == '__main__':
 
         print ">", line,
         try:
+            OLED.printToOLED(line)  #for when I don't want to speak
             ast = parse(parser, scan(line))
             printAST(ast)
             execute(ast, f == sys.stdin)

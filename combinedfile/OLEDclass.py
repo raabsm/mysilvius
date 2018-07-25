@@ -35,14 +35,20 @@ class OLEDclass():
 
     def printToOLED(self, result):
         draw.rectangle((0,0,width,height), outline=0, fill=0)
-        if len(result) > 20:
-            cut = result[0:21]
+        length = 21
+        print len(result)
+        if len(result) > 43:
+            cursor = len(result)-(len(result)%21)
+            cut = result[cursor-21:cursor]
             draw.text((x, top), cut, font=font, fill=255)
-            draw.text((x, top+8), result[21:], font=font, fill=255)
+            draw.text((x, top+8), result[cursor:], font=font, fill=255)    
+        elif len(result) > 20:
+            cut = result[0:length]
+            draw.text((x, top), cut, font=font, fill=255)
+            draw.text((x, top+8), result[length:], font=font, fill=255)
         else:
             draw.text((x, top), result, font=font, fill=255) 
 
-        #draw.text((x, top+20), status, font=font, fill=255)
         disp.image(image)
         disp.display()
     def printStatus(self, status):

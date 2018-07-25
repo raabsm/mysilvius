@@ -38,7 +38,10 @@ class GPIOclass():
         if self.ifSetup:
             GPIO.output(self.pin, state)
             self.pinState = state
-            self.status()
+            if state:
+                self.outputstring = "light turned on"
+            else:
+                self.outputstring = "light turned off"
         else:
             self.outputstring = "pin isn't setup"
     def checkIfSetup(self):

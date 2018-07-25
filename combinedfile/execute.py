@@ -4,7 +4,7 @@ import os
 from spark import GenericASTTraversal
 import GPIOclass
 GPIO = GPIOclass.GPIOclass()
-outputstring = GPIO.returnOutputString()
+outputstring = ""
 class ExecuteCommands(GenericASTTraversal):
     def __init__(self, ast, real = True):
         GenericASTTraversal.__init__(self, ast)
@@ -12,7 +12,6 @@ class ExecuteCommands(GenericASTTraversal):
         self.automator = Automator(real)
         self.postorder_flat()
         self.automator.flush()
-        
     # a version of postorder which does not visit children recursively
     def postorder_flat(self, node=None):
         if node is None:
