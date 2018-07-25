@@ -83,7 +83,10 @@ class Automator:
 
     def flush(self):
         if len(self.xdo_list) == 0: return
-
+        global outputstring
+        outputstring = ""
+        outputstring += ' '.join(self.xdo_list)
+        outputstring = outputstring.replace('key ', '')
         command = '/usr/bin/xdotool' + ' '
         command += ' '.join(self.xdo_list)
         self.execute(command)
@@ -95,7 +98,6 @@ class Automator:
         print "`%s`" % command
         if self.real:
             os.system(command)
-
     def raw_key(self, k):
         if(k == "'"): k = 'apostrophe'
         elif(k == '.'): k = 'period'

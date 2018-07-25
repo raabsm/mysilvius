@@ -5,7 +5,7 @@ from scan import scan
 from parse import parse
 from parse import GrammaticalError
 from parse import SingleInputParser
-from execute import execute
+import execute
 from ast import printAST
 import OLEDclass
 
@@ -29,10 +29,11 @@ if __name__ == '__main__':
 
         print ">", line,
         try:
-            OLED.printToOLED(line)  #for when I don't want to speak
+            #OLED.printToOLED(line)  #for when I don't want to speak
             ast = parse(parser, scan(line))
             printAST(ast)
-            execute(ast, f == sys.stdin)
+            execute.execute(ast, f == sys.stdin)
+            #OLED.printStatus(execute.outputstring)
         except GrammaticalError as e:
             print "Error:", e
 
