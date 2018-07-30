@@ -52,7 +52,21 @@ class OLEDclass():
         disp.image(image)
         disp.display()
     def printStatus(self, status):
-        if len(status) < 21:
+        holder = status
+        if "||" in status and len(status)> 30:
+            draw.rectangle((x, top, width, height), outline = 0, fill = 0)
+            prevIndex = 0 
+            nextIndex = 0 
+            counter = 0
+            while True:
+                nextIndex = status.find("||", prevIndex)
+                if nextIndex == -1: break
+                draw.text((x, top+(counter)), status[prevIndex:nextIndex], font=font, fill=255)
+                counter+=8
+                prevIndex=nextIndex + 2
+            disp.image(image)
+            disp.display()
+        elif len(status) < 21:
             draw.text((x, top+18), status, font=font, fill=255)
             disp.image(image)
             disp.display()

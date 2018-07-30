@@ -42,7 +42,7 @@ class GPIOclass():
         if numLight == "all" and len(self.pins) > 0:
             for x in self.pins:
                 GPIO.output(x, state)
-            self.outputstring = "all lights turned on"
+            self.outputstring = "all lights turned %s" %self.checkState(self.pins[0])
             return
         if len(self.pins)>=numLight:
             GPIO.output(self.pins[numLight-1], state)
@@ -68,10 +68,10 @@ class GPIOclass():
         if len(self.pins)>0:
             if numLight == "all":
                 for x in range(0, len(self.pins)):
-                    self.outputstring += "pin %s light %s is %s||" %(self.pins[x], x+1, self.checkState(self.pins[x]))
+                    self.outputstring += "light %s pin %s is %s||" %(x+1, self.pins[x], self.checkState(self.pins[x]))
             else:
                 try:
-                    self.outputstring += "pin %s light %s is %s" %(self.pins[numLight-1], numLight, self.checkState(self.pins[numLight-1]))
+                    self.outputstring += "light %s pin %s is %s" %(numLight, self.pins[numLight-1], self.checkState(self.pins[numLight-1]))
                 except IndexError:
                     self.outputstring = "aren't that many lights setup"
         else:
