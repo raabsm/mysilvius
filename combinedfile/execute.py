@@ -33,13 +33,12 @@ class ExecuteCommands(GenericASTTraversal):
     def n_elec(self, node):
      #   print "test ", self, node, node.meta[0]
         #node.meta[0] prints a 1 or 0 for true and false
-        action = str(node.meta[0])
         global outputstring
-        outputstring = GPIO.perform(action)
+        outputstring = GPIO.perform(node.meta[0], node.children[0].meta[0])
     def n_pinsetup(self,node):
-        action = int(node.meta[0])
         global outputstring
-        outputstring = GPIO.perform(action)
+        print node.meta[0], node.children[0].meta[0], "--test" 
+        outputstring = GPIO.setup(str(node.meta[0]), int(node.children[0].meta[0]))
     def n_char(self, node):
         char_list = list(node.meta[0])
         for i in char_list:
@@ -87,6 +86,7 @@ class Automator:
         outputstring = ""
         outputstring += ' '.join(self.xdo_list)
         outputstring = outputstring.replace('key ', '')
+        outputstring = outputstring.replace('space','')
         command = '/usr/bin/xdotool' + ' '
         command += ' '.join(self.xdo_list)
         self.execute(command)

@@ -73,15 +73,21 @@ class CoreParser(GenericParser):
             return None
     def p_pinsetup(self,args):
         '''
-            pinsetup ::= signal number_set
+            pinsetup ::= signal new number_set
+            pinsetup ::= signal delete number_set
         '''   
-        return AST('pinsetup', [ args[1] ]) 
+        return AST('pinsetup', [ str(args[1]) ], [
+            AST('pinsetup', [int(args[2]) ]) 
+        ]) 
 
     def p_electricity(self, args):
         '''
-            electricity ::= light _action
+            electricity ::= light number_set _action
+            electricity ::= light all _action 
         ''' 
-        return AST('elec', [  args[1] ])
+        return AST('elec', [  args[1] ], [
+            AST('elec', [args[2 ] ])
+        ])
     #chr(ord is just a way of adding two ints and converting to str
     def p__action(self, args):
         '''
