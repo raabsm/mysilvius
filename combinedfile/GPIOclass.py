@@ -32,7 +32,7 @@ class GPIOclass():
         #see if number is available on GPIO setup
         if self.ifSetup(number):
             self.outputstring = "pin already taken"
-        elif 2 <= number <= 27:
+        elif 4 <= number <= 27:
             self.pins.append(number)
             GPIO.setup(number, GPIO.OUT)
             self.outputstring = "pin %s activated as light %s" %(number, len(self.pins))

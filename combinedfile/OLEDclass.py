@@ -52,8 +52,26 @@ class OLEDclass():
         disp.image(image)
         disp.display()
     def printStatus(self, status):
-        holder = status
-        if "||" in status and len(status)> 30:
+        if len(status) > 69 and "||" in status: #scrolling
+            alttop = top
+            while True:
+                draw.rectangle((x,top, width, height), outline = 0, fill = 0)
+                prevIndex = 0 
+                nextIndex = 0 
+                counter = 0
+                while True:
+                    nextIndex = status.find("||", prevIndex)
+                    if nextIndex == -1: break
+                    draw.text((x, alttop+(counter)), status[prevIndex:nextIndex], font=font, fill=255)
+                    counter+=9
+                    prevIndex=nextIndex + 2
+                disp.image(image)
+                disp.display()
+                if alttop == top: time.sleep(1)
+                alttop-=1
+                if alttop/ -9 > (len(status) - 69)/23: break
+
+        elif "||" in status and len(status)> 30:
             draw.rectangle((x, top, width, height), outline = 0, fill = 0)
             prevIndex = 0 
             nextIndex = 0 
@@ -62,7 +80,7 @@ class OLEDclass():
                 nextIndex = status.find("||", prevIndex)
                 if nextIndex == -1: break
                 draw.text((x, top+(counter)), status[prevIndex:nextIndex], font=font, fill=255)
-                counter+=8
+                counter+=9
                 prevIndex=nextIndex + 2
             disp.image(image)
             disp.display()
