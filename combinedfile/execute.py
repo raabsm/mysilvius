@@ -39,6 +39,9 @@ class ExecuteCommands(GenericASTTraversal):
         global outputstring
         print node.meta[0], node.children[0].meta[0], "--test" 
         outputstring = GPIO.setup(str(node.meta[0]), int(node.children[0].meta[0]))
+    def n_print_sleep(self, node):
+        global outputstring
+        outputstring = str(node.meta)
     def n_char(self, node):
         char_list = list(node.meta[0])
         for i in char_list:
