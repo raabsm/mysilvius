@@ -52,8 +52,10 @@ class OLEDclass():
         disp.image(image)
         disp.display()
     def printStatus(self, status):
+        draw.rectangle((x, top+18, width, height), outline = 0, fill =0)
         if len(status) > 69 and "||" in status: #scrolling
             alttop = top
+            numLines = status.count("||")
             while True:
                 draw.rectangle((x,top, width, height), outline = 0, fill = 0)
                 prevIndex = 0 
@@ -68,8 +70,9 @@ class OLEDclass():
                 disp.image(image)
                 disp.display()
                 if alttop == top: time.sleep(1)
-                alttop-=1
-                if alttop/ -9 > (len(status) - 69)/23: break
+                alttop-=2
+                print alttop
+                if alttop/-9 >= numLines-3: break
 
         elif "||" in status and len(status)> 30:
             draw.rectangle((x, top, width, height), outline = 0, fill = 0)

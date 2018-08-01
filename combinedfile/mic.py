@@ -122,6 +122,7 @@ class MyClient(WebSocketClient):
                 if response['result']['final']:
                     if self.show_hypotheses:
                         print >> sys.stderr, '\r%s' % trans.replace("\n", "\\n")
+                    execute.outputstring = "Not Recognized"
                     self.runGrammar(trans)
                     OLED.printStatus(execute.outputstring)
                     print "final result", '%s' % trans.replace("\n", "\\n")  # final result!

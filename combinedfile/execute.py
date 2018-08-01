@@ -5,6 +5,7 @@ from spark import GenericASTTraversal
 import GPIOclass
 GPIO = GPIOclass.GPIOclass()
 outputstring = ""
+counter = 0 
 class ExecuteCommands(GenericASTTraversal):
     def __init__(self, ast, real = True):
         GenericASTTraversal.__init__(self, ast)
@@ -12,6 +13,8 @@ class ExecuteCommands(GenericASTTraversal):
         self.automator = Automator(real)
         self.postorder_flat()
         self.automator.flush()
+        global counter
+        counter = 0
     # a version of postorder which does not visit children recursively
     def postorder_flat(self, node=None):
         if node is None:
@@ -31,14 +34,9 @@ class ExecuteCommands(GenericASTTraversal):
         for n in node.children:
             self.postorder_flat(n)  
     def n_elec(self, node):
-     #   print "test ", self, node, node.meta[0]
-        #node.meta[0] prints a 1 or 0 for true and false
-        global outputstring
-        outputstring = GPIO.perform(node.meta[0], node.children[0].meta[0])
+        self.automator.addOutputstrings(GPIO.perform(node.meta[0], node.children[0].meta[0]))
     def n_pinsetup(self,node):
-        global outputstring
-        print node.meta[0], node.children[0].meta[0], "--test" 
-        outputstring = GPIO.setup(str(node.meta[0]), int(node.children[0].meta[0]))
+        self.automator.addOutputstrings(GPIO.setup(str(node.meta[0]), int(node.children[0].meta[0])))
     def n_print_sleep(self, node):
         global outputstring
         outputstring = str(node.meta)
@@ -85,16 +83,23 @@ class Automator:
 
     def flush(self):
         if len(self.xdo_list) == 0: return
-        global outputstring
-        outputstring = ""
-        outputstring += ' '.join(self.xdo_list)
-        outputstring = outputstring.replace('key ', '')
-        outputstring = outputstring.replace('space','')
+        string = ""
+        string += ' '.join(self.xdo_list)
+        string = string.replace('key ', '')
+        string = string.replace('space','')
+        self.addOutputstrings(string)
         command = '/usr/bin/xdotool' + ' '
         command += ' '.join(self.xdo_list)
         self.execute(command)
         self.xdo_list = []
-
+    def addOutputstrings(self, string):
+        global counter
+        counter+=1
+        global outputstring
+        if counter>1:
+            outputstring+="-- " + string
+        else:
+            outputstring = string
     def execute(self, command):
         if command == '': return
 
