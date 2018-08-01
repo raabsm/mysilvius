@@ -73,13 +73,26 @@ class CoreParser(GenericParser):
             return None
     def p_pinsetup(self,args):
         '''
-            pinsetup ::= signal new number_set
-            pinsetup ::= signal delete number_set
+            pinsetup ::= signal new multiplepins
+            pinsetup ::= signal delete multiplepins
         '''   
-        return AST('pinsetup', [ str(args[1]) ], [
-            AST('pinsetup', [int(args[2]) ]) 
-        ]) 
-
+      #  return AST('pinsetup', [ str(args[1]) ], [
+       #     AST('pinsetup', [args[2] ]) 
+       # ]) 
+        return AST('pinsetup', [ str(args[1]) ] , args[2])
+    def p_multiplepins(self, args):
+        '''
+            multiplepins ::= number_set
+            multiplepins ::= number_set multiplepins
+        '''
+    
+        if len(args) == 1:
+            return AST('null', None, [AST('null', args[0])])
+        else:
+            args[1].children.insert(0, AST('null', args[0]))
+            print "running children"
+            return args[1]
+    
     def p_electricity(self, args):
         '''
             electricity ::= light number_set _action

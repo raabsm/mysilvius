@@ -18,26 +18,29 @@ class GPIOclass():
         elif action == "status":
             self.status(numLight)
         return self.outputstring
-    def setup(self, phrase, num):
+    def setup(self, phrase, numbers):
+        self.outputstring = ""
         if phrase == "new":
-            self.setupPin(num)
+            self.setupPin(numbers)
         else:
-            if self.ifSetup(num):
-                self.outputstring = "pin %s light %s removed" %(num, self.pins.index(num) + 1)
-                self.pins.remove(num)
-            else:
-                self.outputstring = "pin was never setup"
+            for num in numbers:
+                if self.ifSetup(num):
+                    self.outputstring += "pin %s light %s removed " %(num, self.pins.index(num) + 1)
+                    self.pins.remove(num)
+                else:
+                    self.outputstring += "pin %s was never setup "%num
         return self.outputstring
-    def setupPin(self, number):
+    def setupPin(self, numbers):
         #see if number is available on GPIO setup
-        if self.ifSetup(number):
-            self.outputstring = "pin already taken"
-        elif 4 <= number <= 27:
-            self.pins.append(number)
-            GPIO.setup(number, GPIO.OUT)
-            self.outputstring = "pin %s activated as light %s" %(number, len(self.pins))
-        else:
-            self.outputstring = "pin not available"
+        for num in numbers:
+            if self.ifSetup(num):
+                self.outputstring += "pin %s already taken "%num
+            elif 4 <= num <= 27:
+                self.pins.append(num)
+                GPIO.setup(num, GPIO.OUT)
+                self.outputstring += "pin %s activated as light %s " %(num, len(self.pins))
+            else:
+                self.outputstring += "pin %s not available " %num 
     def output(self, numLight, state):
         if numLight == "all" and len(self.pins) > 0:
             for x in self.pins:

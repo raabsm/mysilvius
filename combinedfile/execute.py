@@ -34,9 +34,14 @@ class ExecuteCommands(GenericASTTraversal):
         for n in node.children:
             self.postorder_flat(n)  
     def n_elec(self, node):
-        self.automator.addOutputstrings(GPIO.perform(node.meta[0], node.children[0].meta[0]))
+        #self.automator.addOutputstrings(GPIO.perform(node.meta[0], node.children[0].meta[0]))
+        for n in node.children:
+            print n
     def n_pinsetup(self,node):
-        self.automator.addOutputstrings(GPIO.setup(str(node.meta[0]), int(node.children[0].meta[0])))
+        pins = []
+        for n in node.children:
+            pins.append(int(n.meta))
+        self.automator.addOutputstrings(GPIO.setup(str(node.meta[0]), pins))
     def n_print_sleep(self, node):
         global outputstring
         outputstring = str(node.meta)
