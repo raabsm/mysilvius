@@ -83,15 +83,14 @@ class CoreParser(GenericParser):
     def p_multiplepins(self, args):
         '''
             multiplepins ::= number_set
-            multiplepins ::= number_set multiplepins
+            multiplepins ::= number_set and multiplepins
         '''
     
         if len(args) == 1:
             return AST('null', None, [AST('null', args[0])])
         else:
-            args[1].children.insert(0, AST('null', args[0]))
-            print "running children"
-            return args[1]
+            args[2].children.insert(0, AST('null', args[0]))
+            return args[2]
     
     def p_electricity(self, args):
         '''

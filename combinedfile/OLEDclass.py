@@ -74,7 +74,7 @@ class OLEDclass():
                 print alttop
                 if alttop/-9 >= numLines-3: break
 
-        elif "||" in status and len(status)> 30:
+        elif "||" in status:
             draw.rectangle((x, top, width, height), outline = 0, fill = 0)
             prevIndex = 0 
             nextIndex = 0 

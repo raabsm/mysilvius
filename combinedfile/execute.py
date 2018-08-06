@@ -33,14 +33,13 @@ class ExecuteCommands(GenericASTTraversal):
     def n_chain(self, node):
         for n in node.children:
             self.postorder_flat(n)  
-    def n_elec(self, node):
-        #self.automator.addOutputstrings(GPIO.perform(node.meta[0], node.children[0].meta[0]))
-        print node.children, node.meta
-        try:
-            for n in node.children:
-                print n
-        except TypeError:
-            pass
+    def n_elec(self, node): 
+        print node.meta[0]
+        pins = []
+        for n in node.children:
+            pins.append(n.meta)
+        test = GPIO.perform(node.meta[0], pins) 
+        self.automator.addOutputstrings(test)
     def n_pinsetup(self,node):
         pins = []
         for n in node.children:
