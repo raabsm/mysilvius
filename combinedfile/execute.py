@@ -7,6 +7,8 @@ GPIO = GPIOclass.GPIOclass()
 outputstring = ""
 counter = 0
 from os import listdir
+import time
+import subprocess
 class ExecuteCommands(GenericASTTraversal):
     def __init__(self, ast, real = True):
         GenericASTTraversal.__init__(self, ast)
@@ -58,7 +60,7 @@ class ExecuteCommands(GenericASTTraversal):
                 files.append(f)
         if node.meta[0] == "list":
             for f in range(0, len(files)):
-                status+="%s is program %s||"%(files[f], f+1)
+                status+="%s is file %s||"%(files[f], f+1)
         else:
             try:
                 num = int(node.children[0].meta) - 1
@@ -68,6 +70,13 @@ class ExecuteCommands(GenericASTTraversal):
             except IndexError:
                 status = "program does not exist"
         self.automator.addOutputstrings(status)
+    def n_getvalue(self,node):
+        string = ""
+        if node.meta[0] == "time":
+            string = time.asctime( time.localtime(time.time()))
+        else:
+            string = subprocess.check_output("hostname -I | cut -d\' \' -f1", shell = True)
+        self.automator.addOutputstrings(string)
     def n_char(self, node):
         char_list = list(node.meta[0])
         for i in char_list:

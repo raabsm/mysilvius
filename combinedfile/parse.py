@@ -46,6 +46,7 @@ class CoreParser(GenericParser):
             single_command ::= electricity
             single_command ::= pinsetup
             single_command ::= run_program
+            single_command ::= get_value
         '''
         return args[0]
 
@@ -72,12 +73,17 @@ class CoreParser(GenericParser):
             return args[0]
         else:
             return None
+    def p_get_value(self, args):
+        '''
+            get_value ::= get internet address
+            get_value ::= get time
+        '''
+        return AST('getvalue', [ args[1] ])
     def p_run_program(self,args):
         '''
             run_program ::= run program number_set
             run_program ::= list programs
         '''
-
         if len(args) > 2:
             return AST('program', [ args[0]] , [
                 AST('program',  args[2])
