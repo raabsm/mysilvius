@@ -5,7 +5,8 @@ from spark import GenericASTTraversal
 import GPIOclass
 GPIO = GPIOclass.GPIOclass()
 outputstring = ""
-counter = 0 
+counter = 0
+from os import listdir
 class ExecuteCommands(GenericASTTraversal):
     def __init__(self, ast, real = True):
         GenericASTTraversal.__init__(self, ast)
@@ -34,7 +35,6 @@ class ExecuteCommands(GenericASTTraversal):
         for n in node.children:
             self.postorder_flat(n)  
     def n_elec(self, node): 
-        print node.meta[0]
         pins = []
         for n in node.children:
             pins.append(n.meta)
@@ -48,6 +48,26 @@ class ExecuteCommands(GenericASTTraversal):
     def n_print_sleep(self, node):
         global outputstring
         outputstring = str(node.meta)
+    def n_program(self, node):
+        #print node.meta[0], node.children[0].meta
+        dirs = listdir("/home/pi/mysilvius/combinedfile/programs")
+        files = []
+        status = ""
+        for f in dirs:
+            if f.endswith(".py"):
+                files.append(f)
+        if node.meta[0] == "list":
+            for f in range(0, len(files)):
+                status+="%s is program %s||"%(files[f], f+1)
+        else:
+            try:
+                num = int(node.children[0].meta) - 1
+                directory = "sudo python programs/%s"%files[num]
+                status = "executed file %s"%files[num]
+                os.system(directory) 
+            except IndexError:
+                status = "program does not exist"
+        self.automator.addOutputstrings(status)
     def n_char(self, node):
         char_list = list(node.meta[0])
         for i in char_list:

@@ -45,6 +45,7 @@ class CoreParser(GenericParser):
             single_command ::= word_phrase
             single_command ::= electricity
             single_command ::= pinsetup
+            single_command ::= run_program
         '''
         return args[0]
 
@@ -71,6 +72,18 @@ class CoreParser(GenericParser):
             return args[0]
         else:
             return None
+    def p_run_program(self,args):
+        '''
+            run_program ::= run program number_set
+            run_program ::= list programs
+        '''
+
+        if len(args) > 2:
+            return AST('program', [ args[0]] , [
+                AST('program',  args[2])
+            ])
+        else:
+            return AST('program',[ str(args[0])])
     def p_pinsetup(self,args):
         '''
             pinsetup ::= signal new multiplepins
