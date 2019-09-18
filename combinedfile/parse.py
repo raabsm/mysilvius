@@ -45,6 +45,8 @@ class CoreParser(GenericParser):
             single_command ::= word_phrase
             single_command ::= electricity
             single_command ::= pinsetup
+            single_command ::= run_program
+            single_command ::= get_value
         '''
         return args[0]
 
@@ -71,11 +73,56 @@ class CoreParser(GenericParser):
             return args[0]
         else:
             return None
+    def p_get_value(self, args):
+        '''
+            get_value ::= get internet address
+            get_value ::= get time
+        '''
+        return AST('getvalue', [ args[1] ])
+    def p_run_program(self,args):
+        '''
+            run_program ::= run program number_set
+            run_program ::= list programs
+        '''
+        if len(args) > 2:
+            return AST('program', [ args[0]] , [
+                AST('program',  args[2])
+            ])
+        else:
+            return AST('program',[ str(args[0])])
+    def p_pinsetup(self,args):
+        '''
+            pinsetup ::= signal new multiplepins
+            pinsetup ::= signal delete multiplepins
+        '''   
+      #  return AST('pinsetup', [ str(args[1]) ], [
+       #     AST('pinsetup', [args[2] ]) 
+       # ]) 
+        return AST('pinsetup', [ str(args[1]) ] , args[2])
+    def p_multiplepins(self, args):
+        '''
+            multiplepins ::= number_set
+            multiplepins ::= number_set and multiplepins
+        '''
+    
+        if len(args) == 1:
+            return AST('null', None, [AST('null', args[0])])
+        else:
+            args[2].children.insert(0, AST('null', args[0]))
+            return args[2]
+    
     def p_electricity(self, args):
         '''
-            electricity ::= light _action
-        '''
-        return AST('elec', [ chr(ord('0') + args[1]) ])
+            electricity ::= light multiplepins _action
+            electricity ::= light all _action 
+        ''' 
+     #   return AST('elec', [  args[1] , [
+      #      AST('elec', [args[2 ] ])
+       # ])
+        if args[1] == "all":
+            return AST('elec', [str(args[2])], [AST('null', args[1])])
+        else:
+            return AST('elec', [str(args[2])], args[1])
     #chr(ord is just a way of adding two ints and converting to str
     def p__action(self, args):
         '''
@@ -83,12 +130,12 @@ class CoreParser(GenericParser):
             _action ::= on
             _action ::= status
         '''
-        value = {
-            'off'    : 0,
-            'on'     : 1,
-            'status' : 2
-        }
-        return value[args[0].type]
+      #  value = {
+       #     'off'    : 0,
+      #      'on'     : 1,
+     #       'status' : 2
+     #   }
+        return str(args[0])
     def p_number_rule(self, args):
         '''
             number_rule ::= number number_set
@@ -101,7 +148,7 @@ class CoreParser(GenericParser):
     def p_number_set(self, args):
         '''
             number_set ::= _firstnumbers
-            number_set ::= _tens
+            number_set ::= _tens 
             number_set ::= _tens _ones
             number_set ::= _hundreds
             number_set ::= _hundreds _firstnumbers
@@ -111,7 +158,7 @@ class CoreParser(GenericParser):
         total = 0
         for x in args:
             total += x
-        return total
+        return total 
 
     def p_thousand_number_set(self, args):
         '''
@@ -120,26 +167,26 @@ class CoreParser(GenericParser):
         '''
         total = args[0] * args[1]
         if len(args)>2: total+=args[2]
-        return total
+        return total 
     def p_million_number_set(self, args):
         '''
-            million_number_set ::= number_set _millions
+            million_number_set ::= number_set _millions 
             million_number_set ::= number_set _millions number_set
             million_number_set ::= number_set _millions thousand_number_set
         '''
         total = args[0] * args[1]
         if len(args)>2: total+=args[2]
-        return total
+        return total 
     def p_billion_number_set(self, args):
         '''
-            billion_number_set ::= number_set _billions
+            billion_number_set ::= number_set _billions 
             billion_number_set ::= number_set _billions number_set
             billion_number_set ::= number_set _billions thousand_number_set
             billion_number_set ::= number_set _billions million_number_set
-        '''
+        ''' 
         total = args[0] * args[1]
         if len(args)>2: total+=args[2]
-        return total
+        return total 
     def p__firstnumbers(self, args):
         '''
             _firstnumbers ::= zero
@@ -198,7 +245,7 @@ class CoreParser(GenericParser):
             _tens ::= sixty
             _tens ::= seventy
             _tens ::= eighty
-            _tens ::= ninety
+            _tens ::= ninety 
         '''
         value = {
             'twenty'   : 20,
@@ -472,11 +519,11 @@ class SingleInputParser(CoreParser):
         '''
         if args[-1].type == 'sleep':
             self.sleeping = True
-            print 'Going to sleep.'
+            print 'Going to sleep.'   
         else:
             self.sleeping = False
+            return AST('print_sleep', "Woke Up" )
             print 'Waking from sleep'
-        return AST('')
 
     def p_single_input(self, args):
         '''

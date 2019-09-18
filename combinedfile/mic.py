@@ -7,69 +7,19 @@ import threading
 import sys
 import urllib
 import json
-
-
-import time
-
-import Adafruit_GPIO.SPI as SPI
-import Adafruit_SSD1306
-
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
-
+from parse import parse
+from parse import SingleInputParser
+from parse import GrammaticalError
+import execute
+from ast import printAST 
+from scan import find_keywords
+from scan import scan
 import subprocess
-
-# Raspberry Pi pin configuration:
-RST = None     # on the PiOLED this pin isnt used
-# Note the following are only used with SPI:
-DC = 23
-SPI_PORT = 0
-SPI_DEVICE = 0
-
-# Beaglebone Black pin configuration:
-# RST = 'P9_12'
-# Note the following are only used with SPI:
-# DC = 'P9_15'
-# SPI_PORT = 1
-# SPI_DEVICE = 0
-
-# 128x32 display with hardware I2C:
-disp = Adafruit_SSD1306.SSD1306_128_32(rst=RST)
-
-
-disp.begin()
-
-# Clear display.
-disp.clear()
-disp.display()
-
-# Create blank image for drawing.
-# Make sure to create image with mode '1' for 1-bit color.
-width = disp.width
-height = disp.height
-image = Image.new('1', (width, height))
-
-# Get drawing object to draw on image.
-draw = ImageDraw.Draw(image)
-
-# Draw a black filled box to clear the image.
-draw.rectangle((0,0,width,height), outline=0, fill=0)
-
-# Draw some shapes.
-# First define some constants to allow easy resizing of shapes.
-padding = -2
-top = padding
-bottom = height-padding
-# Move left to right keeping track of the current x position for drawing shapes.
-x = 0
-
-
-# Load default font.
-font = ImageFont.load_default()
-
-
-
+import OLEDclass
+parser = SingleInputParser()
+find_keywords(parser)
+global OLED
+OLED = OLEDclass.OLEDclass()
 
 reconnect_mode = False
 fatal_error = False
@@ -87,7 +37,7 @@ class MyClient(WebSocketClient):
         self.send_adaptation_state_filename = send_adaptation_state_filename
         self.chunk = 0
         self.audio_gate = audio_gate
-
+        OLED.printStatus(execute.outputstring)
     def send_data(self, data):
         self.send(data, binary=True)
 
@@ -172,22 +122,18 @@ class MyClient(WebSocketClient):
                 if response['result']['final']:
                     if self.show_hypotheses:
                         print >> sys.stderr, '\r%s' % trans.replace("\n", "\\n")
-                    draw.rectangle((0,0,width,height), outline=0, fill=0)
-                    if len(trans) > 20:
-                        cut = trans[0:21]
-                        draw.text((x, top),       cut,  font=font, fill=255)
-                        draw.text((x, top+8),       trans[21:],  font=font, fill=255)
-                    else:
-                        draw.text((x, top),       trans,  font=font, fill=255)
-                    disp.image(image)
-                    disp.display()
-                    print '%s' % trans.replace("\n", "\\n")  # final result!
+                    execute.outputstring = "Not Recognized"
+                    self.runGrammar(trans)
+                    OLED.printStatus(execute.outputstring)
+                    print "final result", '%s' % trans.replace("\n", "\\n")  # final result!
                     sys.stdout.flush()
                 elif self.show_hypotheses:
                     print_trans = trans.replace("\n", "\\n")
                     if len(print_trans) > 80:
                         print_trans = "... %s" % print_trans[-76:]
                     print >> sys.stderr, '\r%s' % print_trans,
+                    #print speech as it is recognized
+                    OLED.printToOLED(print_trans)
             if 'adaptation_state' in response:
                 if self.save_adaptation_state_filename:
                     print >> sys.stderr, "Saving adaptation state to %s" % self.save_adaptation_state_filename
@@ -204,6 +150,13 @@ class MyClient(WebSocketClient):
                 print >> sys.stderr, "Sleeping for five seconds before reconnecting"
                 time.sleep(5)
 
+    def runGrammar(self, message):
+        try:
+            ast = parse(parser, scan(message))
+            printAST(ast)
+            execute.execute(ast, True)
+        except GrammaticalError as e:
+            print "Error:", e     
 
     def closed(self, code, reason=None):
         #print "Websocket closed() called"
